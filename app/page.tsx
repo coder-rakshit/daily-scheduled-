@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import {
   Activity, ArrowUpRight, CalendarDays, Check, CheckCircle2, Circle,
   Clock3, Flame, LayoutDashboard, ListTodo, Menu, MessageSquareText,
@@ -144,7 +144,7 @@ export default function Home() {
             <section className="panel"><div className="panel-head"><div><span className="section-kicker">FOCUS ON WHAT MATTERS</span><h2>Priority tasks</h2></div><button className="text-btn" onClick={()=>navigate("Tasks")}>View all <ArrowUpRight size={14}/></button></div><div className="task-list">{data.tasks.filter(t=>!t.done).sort((a,b)=>["High","Medium","Low"].indexOf(a.priority)-["High","Medium","Low"].indexOf(b.priority)).slice(0,5).map(t=><TaskRow key={t.id} task={t} onToggle={toggleTask} onDelete={removeTask}/>)}</div>{pending===0&&<div className="empty-state"><CheckCircle2 size={20}/> Your task list is clear. Nice work.</div>}</section>
           </div>
           <div className="lower-grid">
-            <section className="panel"><div className="panel-head"><div><span className="section-kicker">THIS WEEK</span><h2>Goals that move you forward</h2></div><Target className="muted-icon" size={18}/></div>{data.goals.map(g=><GoalRow key={g.id} goal={g} onToggle={toggleGoal}/ >)}<button className="add-inline" onClick={()=>setGoalModal(true)}><Plus size={15}/> Add weekly goal</button></section>
+            <section className="panel"><div className="panel-head"><div><span className="section-kicker">THIS WEEK</span><h2>Goals that move you forward</h2></div><Target className="muted-icon" size={18}/></div>{data.goals.map(g=><GoalRow key={g.id} goal={g} onToggle={toggleGoal}/>)}<button className="add-inline" onClick={()=>setGoalModal(true)}><Plus size={15}/> Add weekly goal</button></section>
             <section className="panel"><div className="panel-head"><div><span className="section-kicker">DAILY SYSTEM</span><h2>Keep the promises</h2></div><Activity className="muted-icon" size={18}/></div>{data.habits.map(h=><label className="habit-row" key={h}><input type="checkbox" checked={!!data.habitDone[h]} onChange={e=>update({habitDone:{...data.habitDone,[h]:e.target.checked}})}/><span>{h}</span></label>)}<button className="add-inline" onClick={()=>{const name=window.prompt("New daily habit");if(name?.trim()&&!data.habits.includes(name.trim()))update({habits:[...data.habits,name.trim()]});}}><Plus size={15}/> Add habit</button></section>
           </div>
         </>}
@@ -166,7 +166,7 @@ export default function Home() {
   </main>;
 }
 
-function Stat({icon,label,value,suffix,foot,progress}:{icon:React.ReactNode;label:string;value:string;suffix:string;foot:string;progress?:number}) {
+function Stat({icon,label,value,suffix,foot,progress}:{icon:ReactNode;label:string;value:string;suffix:string;foot:string;progress?:number}) {
   return <div className="stat-card"><div className="stat-top"><span>{label}</span>{icon}</div><div className="stat-number">{value}<small>{suffix}</small></div>{progress!==undefined&&<div className="progress-track"><i style={{width:`${progress}%`}}/></div>}<div className="stat-foot">{foot}</div></div>;
 }
 function Timeline({blocks,onDelete}:{blocks:Block[];onDelete:(id:string)=>void}) {
@@ -178,6 +178,6 @@ function TaskRow({task,onToggle,onDelete}:{task:Task;onToggle:(id:string)=>void;
 function GoalRow({goal,onToggle}:{goal:Goal;onToggle:(id:string)=>void}) {
   return <button className={`goal-row ${goal.done?"goal-done":""}`} onClick={()=>onToggle(goal.id)}><span className="goal-check">{goal.done&&<Check size={13}/>}</span><span>{goal.title}</span><em className={`area-tag ${areaClass[goal.area]}`}>{goal.area}</em></button>;
 }
-function Modal({title,kicker,onClose,children}:{title:string;kicker:string;onClose:()=>void;children:React.ReactNode}) {
+function Modal({title,kicker,onClose,children}:{title:string;kicker:string;onClose:()=>void;children:ReactNode}) {
   return <div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)onClose();}}><section className="modal"><div className="modal-head"><div><span className="section-kicker">{kicker}</span><h2>{title}</h2></div><button type="button" className="icon-btn" onClick={onClose} aria-label="Close"><X/></button></div>{children}</section></div>;
 }
